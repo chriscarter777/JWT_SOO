@@ -7,35 +7,33 @@
 <div class="titles">
      <h2>JWT Single Sign-On</h2>
      <h4>A demonstration of Single Sign-On authentication using microservice REST APIs and JWTs</h4>
+     @Model.Message
 </div>
 
-<form>
+<form method="post">
+     <input type="hidden" asp-for="Data" value="@Model.Data" />
+     <div asp-validation-summary="All"></div>
      <div class="input-group">
-          Username:@Html.TextBoxFor(m => m.Username)
+          Username:<input asp-for="Username" />
      </div>
      <div class="input-group">
-          Password: @Html.TextBoxFor(m => m.Password)
+          Password:<input asp-for="Password" />
      </div>
      <div class="submit-group">
-          <input type="submit" value="Get Token" />
+          <input type="submit" value="Get Token" asp-page-handler="GetToken" />
      </div>
      <div class="response-group">
-          Response Code: <span class="response">@Model.AuthResponseCode</span>
-          <br />
           Token: <span class="response">@Model.Token</span>
      </div>
 </form>
 
 
-<form>
-     @Html.HiddenFor(m => m.AuthResponseCode)
-     @Html.HiddenFor(m => m.Token)
+<form method="post">
+     <input type="hidden" asp-for="Token" value="@Model.Token" />
      <div class="submit-group">
-          <input type="submit" value="Get Data" />
+          <input type="submit" value="Get Data" asp-page-handler="GetData" />
      </div>
      <div class="response-group">
-          Response Code: <span class="response">@Model.DataResponseCode</span>
-          <br />
           Data: <span class="response">@Model.Data</span>
      </div>
 </form>

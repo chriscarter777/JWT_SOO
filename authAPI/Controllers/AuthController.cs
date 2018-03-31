@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,7 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace authAPI.Controllers
 {
-     [Route("api/[controller]")]
+     [Route("api/authorization")]
      public class AuthController : Controller
      {
           private static IConfiguration _configuration;
@@ -30,7 +31,8 @@ namespace authAPI.Controllers
 
           [AllowAnonymous]
           [HttpPost]
-          public IActionResult RequestToken([FromBody] TokenRequest request)
+          [Route("RequestToken")]
+          public string RequestToken([FromBody] TokenRequest request)
           {
                _authorizedUserName = _configuration["AuthorizedUserName"];
                _authorizedPassword = _configuration["AuthorizedPassword"];
@@ -51,13 +53,13 @@ namespace authAPI.Controllers
                         expires: DateTime.Now.AddMinutes(30),
                         signingCredentials: creds);
 
-                    string tokenString = new JwtSecurityTokenHandler().WriteToken(token);
-
-                    return Ok(tokenString);
+                    return new JwtSecurityTokenHandler().WriteToken(token);
                }
-
-               return BadRequest("Could not verify username and password");
-          }
+               else
+               {
+                    return null;
+               }
+          }  //RequestToken
      }  //AuthController class
 
      public class TokenRequest

@@ -2,7 +2,7 @@
 using Xunit;
 using jwtsoo;
 
-namespace JWTauthTests
+namespace jwtsooTests
 {
      public class ConsumerTests
      {

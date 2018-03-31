@@ -2,7 +2,7 @@
 using Xunit;
 using dataAPI;
 
-namespace JWTauthTests
+namespace jwtsooTests
 {
      public class DataTests
      {
@@ -11,9 +11,9 @@ namespace JWTauthTests
           {
                string token = "";
                int expectedCode = 200;
-               string expectedData = "This is your data.";
+               string expectedData = "This is your data";
                Assert.Equals(expectedCode, response.code);
-               Assert.Equals(expectedData, response.body);
+               Assert.Contains(expectedData, response.body);
           }
 
           [Fact]

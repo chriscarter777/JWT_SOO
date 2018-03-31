@@ -2,7 +2,7 @@ using System;
 using Xunit;
 using authAPI;
 
-namespace JWTauthTests
+namespace jwtsooTests
 {
     public class AuthTests
     {
@@ -12,9 +12,9 @@ namespace JWTauthTests
                string username = "admin";
                string password = "secret";
                int expectedCode = 200;
-               string expectedData = "";
+               string expectedToken = "";
                Assert.Equals(expectedCode, response.code);
-               Assert.Equals(expectedData, response.body);
+               Assert.Equals(expectedToken, response.body);
           }
 
           [Fact]
@@ -22,11 +22,11 @@ namespace JWTauthTests
           {
                string username = "admin";
                string password = "wrong";
-               int expectedCode = 200;
-               string expectedData = "";
+               int expectedCode = 401;
+               string expectedToken = "";
                Assert.Equals(expectedCode, response.code);
                Assert.Null(response.body);
-               Assert.Equals(expectedData, response.body);
+               Assert.Equals(expectedToken, response.body);
           }
      }  //class
 }  //namespace
