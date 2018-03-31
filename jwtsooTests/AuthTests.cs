@@ -1,32 +1,70 @@
 using System;
 using Xunit;
-using authAPI;
+using authAPI.Controllers;
+using System.Security.Claims;
+using Newtonsoft.Json;
+using Microsoft.Extensions.Configuration;
+using System.IO;
 
 namespace jwtsooTests
 {
-    public class AuthTests
-    {
-        [Fact]
-        public void apiServesTokenToAuthorized()
-        {
-               string username = "admin";
-               string password = "secret";
-               int expectedCode = 200;
-               string expectedToken = "";
-               Assert.Equals(expectedCode, response.code);
-               Assert.Equals(expectedToken, response.body);
+     public class AuthTests
+     {
+          private static IConfiguration _configuration;
+          public AuthTests()
+          {
+               _configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .Build();
+          }  //ctor
+
+          [Fact]
+          public void GenerateJWTGeneratesToken()
+          {
+               Claim[] claims = new[]
+               {
+                    new Claim(ClaimTypes.Name, "admin")
+               };
+               AuthController ac = new AuthController();
+               //
+               string tokenstring = ac.GenerateJWT(claims, DateTime.Now);
+               //
+               Assert.NotNull(tokenstring);
+               Assert.IsType<string>(tokenstring);
           }
 
           [Fact]
-          public void apiDoesntServeTokenToUnauthorized()
+          public void apiServesTokenToAuthorized()
           {
-               string username = "admin";
-               string password = "wrong";
-               int expectedCode = 401;
-               string expectedToken = "";
-               Assert.Equals(expectedCode, response.code);
-               Assert.Null(response.body);
-               Assert.Equals(expectedToken, response.body);
+               TokenRequest request = new TokenRequest { Username = "admin", Password = "secret" };
+               AuthController ac = new AuthController();
+               //
+               var response = ac.RequestToken(request);
+               //
+               Assert.NotNull(response);
+               Assert.IsType<string>(response);
+          }
+
+          [Fact]
+          public void apiDoesntServeTokenToWrongUser()
+          {
+               TokenRequest request = new TokenRequest { Username = "wrong", Password = "secret" };
+               AuthController ac = new AuthController();
+               //
+               var response = ac.RequestToken(request);
+               //
+               Assert.Null(response);
+          }
+          [Fact]
+          public void apiDoesntServeTokenToWrongPassword()
+          {
+               TokenRequest request = new TokenRequest { Username = "admin", Password = "wrong" };
+               AuthController ac = new AuthController();
+               //
+               var response = ac.RequestToken(request);
+               //
+               Assert.Null(response);
           }
      }  //class
 }  //namespace

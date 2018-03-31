@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using System;
+using System.IO;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace jwtsoo.Pages
 {
@@ -74,7 +72,7 @@ namespace jwtsoo.Pages
                }
                string dataUrl = _configuration["DataAPI"];
                client.DefaultRequestHeaders.Clear();
-               client.DefaultRequestHeaders.Add("Authorization", Token);
+               client.DefaultRequestHeaders.Add("Authorization", "Bearer " + Token);
                try
                {
                     string responseString = await client.GetStringAsync(dataUrl);

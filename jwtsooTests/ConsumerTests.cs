@@ -1,29 +1,40 @@
 ﻿using System;
 using Xunit;
-using jwtsoo;
+using jwtsoo.Pages;
+using Microsoft.Extensions.Configuration;
+using System.IO;
 
 namespace jwtsooTests
 {
      public class ConsumerTests
      {
+          private static IConfiguration _configuration;
+          public ConsumerTests()
+          {
+               _configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .Build();
+          }  //ctor
+
           [Fact]
           public void ConsumerMakesAuthRequest()
           {
-               string token = "";
-               int expectedCode = 200;
-               string expectedData = "This is your data.";
-               Assert.Equals(expectedCode, response.code);
-               Assert.Equals(expectedData, response.body);
+               IndexModel im = new IndexModel();
+               //
+               var result = im.OnPostGetTokenAsync();
+               //
+               Assert.NotNull(result);
           }
 
           [Fact]
           public void ConsumerMakesDataRequest()
           {
-               string token = "";
-               int expectedCode = 200;
-               string expectedData = "This is your data.";
-               Assert.Equals(expectedCode, response.code);
-               Assert.Equals(expectedData, response.body);
+               IndexModel im = new IndexModel();
+               //
+               var result = im.OnPostGetDataAsync();
+               //
+               Assert.NotNull(result);
           }
      }  //class
 }  //namspace

@@ -1,30 +1,86 @@
 ﻿using System;
 using Xunit;
-using dataAPI;
+using dataAPI.Controllers;
+using System.Security.Claims;
+using authAPI.Controllers;
+using Microsoft.Extensions.Configuration;
+using System.IO;
+using System.Net.Http;
+using System.Web.Http.Controllers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace jwtsooTests
 {
      public class DataTests
      {
+          private static IConfiguration _configuration;
+          public DataTests()
+          {
+               _configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .Build();
+          }  //ctor
+
           [Fact]
           public void apiServesToValidToken()
           {
-               string token = "";
-               int expectedCode = 200;
-               string expectedData = "This is your data";
-               Assert.Equals(expectedCode, response.code);
-               Assert.Contains(expectedData, response.body);
+               //Arrange 1 of 3
+               Claim[] claims = new[]
+               {
+                    new Claim(ClaimTypes.Name, "admin")
+               };
+               AuthController ac = new AuthController();
+               string tokenstring = ac.GenerateJWT(claims, DateTime.Now);
+               //Arrange 2 of 3
+               DataController dc = new DataController();
+               HttpControllerContext controllerContext = new HttpControllerContext();
+               HttpRequestMessage request = new HttpRequestMessage();
+               request.Headers.Add("Authorization", tokenstring);
+               //controllerContext.Request = request;
+               //dc.ControllerContext = controllerContext;
+               //Arrange 3 of 3
+               string expectedResponse = "This is your data";
+               //Act
+               string response = dc.GetData();
+               //Assert
+               Assert.Contains(expectedResponse, response);
           }
 
           [Fact]
           public void apiDoesntServeToInvalidToken()
           {
-               string token = "";
-               int expectedCode = 401;
-               string expectedData = "";
-               Assert.Equals(expectedCode, response.code);
-               Assert.Null(response.body);
-               Assert.Equals(expectedData, response.body);
+               //Arrange 1 of 2
+               Claim[] claims = new[]
+               {
+                    new Claim(ClaimTypes.Name, "wrong")
+               };
+               AuthController ac = new AuthController();
+               string tokenstring = ac.GenerateJWT(claims, DateTime.Now);
+               //Arrange 2 of 2
+               DataController dc = new DataController();
+               HttpControllerContext controllerContext = new HttpControllerContext();
+               HttpRequestMessage request = new HttpRequestMessage();
+               request.Headers.Add("Authorization", tokenstring);
+               //controllerContext.Request = request;
+               //dc.ControllerContext = controllerContext;
+               //Act
+               string response = dc.GetData();
+               //Assert
+               Assert.Null(response);
           }
+
+          [Fact]
+          public void apiDoesntServeToMissingToken()
+          {
+               DataController dc = new DataController();
+               HttpControllerContext controllerContext = new HttpControllerContext();
+               HttpRequestMessage request = new HttpRequestMessage();
+               //Act
+               string response = dc.GetData();
+               //Assert
+               Assert.Null(response);
+          }
+
      }  //class
 }  //namespace
