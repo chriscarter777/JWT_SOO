@@ -1,4 +1,4 @@
-# JWT_SOO
+# Single Sign-On with JWT
 A model for Single Sign-On using JWTs and microservice REST APIs
 
 This project is implemented in .NET Core 2.0 RazorPages.
