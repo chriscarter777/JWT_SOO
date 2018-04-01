@@ -25,10 +25,9 @@ namespace dataAPI.Controllers
           //[Authorize(Policy = "Admin")]
           [Authorize]
           [Route("GetData")]
-          public string GetData()
+          public IActionResult GetData()
           {
-               Debug.WriteLine("Key: " + Encoding.UTF8.GetBytes(_configuration["SecurityKey"]));
-               return $"This is your data as of {DateTime.Now}";
+               return Ok($"This is your data as of {DateTime.Now}");
           }  //GetData
      }  //class
 }  //namespace

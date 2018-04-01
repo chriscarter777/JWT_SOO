@@ -11,6 +11,7 @@
 </div>
 
 <form method="post">
+     <input type="hidden" asp-for="DataStatus" value="@Model.DataStatus" />
      <input type="hidden" asp-for="Data" value="@Model.Data" />
      <div asp-validation-summary="All"></div>
      <div class="input-group">
@@ -23,17 +24,22 @@
           <input type="submit" value="Get Token" asp-page-handler="GetToken" />
      </div>
      <div class="response-group">
-          Token: <span class="response">@Model.Token</span>
+          StatusCode: <span class="response">@Model.AuthStatus</span>
+          <br />
+          Token: <span class="response small">@Model.Token</span>
      </div>
 </form>
 
 
 <form method="post">
+     <input type="hidden" asp-for="AuthStatus" value="@Model.AuthStatus" />
      <input type="hidden" asp-for="Token" value="@Model.Token" />
      <div class="submit-group">
           <input type="submit" value="Get Data" asp-page-handler="GetData" />
      </div>
      <div class="response-group">
+          StatusCode: <span class="response">@Model.DataStatus</span>
+          <br />
           Data: <span class="response">@Model.Data</span>
      </div>
 </form>

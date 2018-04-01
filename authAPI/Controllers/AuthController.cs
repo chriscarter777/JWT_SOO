@@ -5,6 +5,9 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
 using System.Security.Claims;
 using System.Text;
 
@@ -28,7 +31,7 @@ namespace authAPI.Controllers
           [AllowAnonymous]
           [HttpPost]
           [Route("RequestToken")]
-          public string RequestToken([FromBody] TokenRequest request)
+          public IActionResult RequestToken([FromBody] TokenRequest request)
           {
                _authorizedUserName = _configuration["AuthorizedUserName"];
                _authorizedPassword = _configuration["AuthorizedPassword"];
@@ -38,12 +41,12 @@ namespace authAPI.Controllers
                     {
                          new Claim(ClaimTypes.Name, request.Username)
                     };
-
-                    return GenerateJWT(claims, DateTime.Now.AddMinutes(30));
+                    string token = GenerateJWT(claims, DateTime.Now.AddMinutes(30));
+                    return Ok(token);
                }
                else
                {
-                    return null;
+                    return Unauthorized();
                }
           }  //RequestToken
 

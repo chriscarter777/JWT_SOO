@@ -17,7 +17,11 @@ namespace jwtsoo.Pages
           [BindProperty]
           public string Password { get; set; }
           [BindProperty]
+          public string AuthStatus { get; set; }
+          [BindProperty]
           public string Token { get; set; }
+          [BindProperty]
+          public string DataStatus { get; set; }
           [BindProperty]
           public string Data { get; set; }
           [BindProperty]
@@ -40,20 +44,20 @@ namespace jwtsoo.Pages
 
           public async Task<IActionResult> OnPostGetTokenAsync()
           {
-               Message = $" Server time is { DateTime.Now }";
                if (!ModelState.IsValid)
                {
                     return Page();
                }
-               string authUrl = _configuration["AuthAPI"];
-               TokenRequest request = new TokenRequest { Username = Username, Password = Password };
+               string authUri = _configuration["AuthAPI"];
+               TokenRequest request = new TokenRequest(Username, Password);
                string tokenRequestString = JsonConvert.SerializeObject(request);
                HttpContent requestContent = new StringContent(tokenRequestString, Encoding.UTF8, "application/json");
                try
                {
-                    HttpResponseMessage response = await client.PostAsync(authUrl, requestContent);
-                    string responseString = await response.Content.ReadAsStringAsync();
-                    Token = String.IsNullOrEmpty(responseString) ? "Invalid Request" : responseString;
+                    HttpResponseMessage response = await client.PostAsync(authUri, requestContent);
+                    AuthStatus = response.StatusCode.ToString();
+                    Token = await response.Content.ReadAsStringAsync();
+                    Message = $" JWT obtained at { DateTime.Now }";
                     return Page();
                }
                catch (HttpRequestException e)
@@ -65,18 +69,19 @@ namespace jwtsoo.Pages
 
           public async Task<IActionResult> OnPostGetDataAsync()
           {
-               Message = $" Server time is { DateTime.Now }";
                if (!ModelState.IsValid)
                {
                     return Page();
                }
-               string dataUrl = _configuration["DataAPI"];
+               string dataUri = _configuration["DataAPI"];
                client.DefaultRequestHeaders.Clear();
                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + Token);
                try
                {
-                    string responseString = await client.GetStringAsync(dataUrl);
-                    Data = String.IsNullOrEmpty(responseString) ? "Invalid Request" : responseString;
+                    HttpResponseMessage response = await client.GetAsync(dataUri);
+                    DataStatus = response.StatusCode.ToString();
+                    Data = await response.Content.ReadAsStringAsync();
+                    Message = $" Data obtained at { DateTime.Now }";
                     return Page();
                }
                catch (HttpRequestException e)
@@ -91,5 +96,10 @@ namespace jwtsoo.Pages
      {
           public string Username { get; set; }
           public string Password { get; set; }
+          public TokenRequest(string u, string p)
+          {
+               Username = u;
+               Password = p;
+          }  //ctor
      }  //TokenRequest class
 }  //namespace

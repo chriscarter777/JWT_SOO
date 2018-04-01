@@ -5,6 +5,7 @@ using System.Security.Claims;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Configuration;
 using System.IO;
+using Microsoft.AspNetCore.Mvc;
 
 namespace jwtsooTests
 {
@@ -42,8 +43,7 @@ namespace jwtsooTests
                //
                var response = ac.RequestToken(request);
                //
-               Assert.NotNull(response);
-               Assert.IsType<string>(response);
+               Assert.IsType<OkObjectResult>(response);
           }
 
           [Fact]
@@ -54,7 +54,7 @@ namespace jwtsooTests
                //
                var response = ac.RequestToken(request);
                //
-               Assert.Null(response);
+               Assert.IsType<UnauthorizedResult>(response);
           }
           [Fact]
           public void apiDoesntServeTokenToWrongPassword()
@@ -64,7 +64,7 @@ namespace jwtsooTests
                //
                var response = ac.RequestToken(request);
                //
-               Assert.Null(response);
+               Assert.IsType<UnauthorizedResult>(response);
           }
      }  //class
 }  //namespace
